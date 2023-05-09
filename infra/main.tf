@@ -48,7 +48,7 @@ resource "aws_iam_role_policy" "my_policy" {
         Action = [
           "secretsmanager:GetSecretValue"
         ],
-        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:replenish4me-db-password-${env}"
+        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:replenish4me-db-password-${var.env}"
       }
     ]
   })
