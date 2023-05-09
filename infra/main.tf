@@ -33,3 +33,23 @@ resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.my_role.name
 }
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_iam_role_policy" "my_policy" {
+  name = "my-lambda-policy"
+  role = aws_iam_role.my_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:replenish4me-db-password-${env}"
+      }
+    ]
+  })
+}
