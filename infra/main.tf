@@ -55,5 +55,5 @@ resource "aws_iam_policy" "secrets_manager_policy" {
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_policy_attachment" {
   policy_arn = aws_iam_policy.secrets_manager_policy.arn
-  role       = aws_iam_role.create_user_role_dev.id
+  role       = aws_iam_role.my_role.id
 }
