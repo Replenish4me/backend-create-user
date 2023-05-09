@@ -36,11 +36,10 @@ resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
 
 data "aws_caller_identity" "current" {}
 
-resource "aws_iam_role_policy" "my_policy" {
-  name = "my-lambda-policy"
-  role = aws_iam_role.my_role.id
-
-  policy = jsonencode({
+resource "aws_iam_policy" "secrets_manager_policy" {
+  name        = "secrets-manager-policy"
+  description = "Policy to allow access to Secrets Manager"
+  policy      = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
@@ -48,8 +47,13 @@ resource "aws_iam_role_policy" "my_policy" {
         Action = [
           "secretsmanager:GetSecretValue"
         ],
-        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:replenish4me-db-password-${var.env}"
+        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*"
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "secrets_manager_policy_attachment" {
+  policy_arn = aws_iam_policy.secrets_manager_policy.arn
+  role       = aws_iam_role.create_user_role_dev.id
 }
