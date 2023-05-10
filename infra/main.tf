@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_policy" "secrets_manager_policy" {
-  name        = "secrets-manager-policy"
+  name        = "${var.function_name}-secrets-manager-policy-${var.env}"
   description = "Policy to allow access to Secrets Manager"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -55,5 +55,27 @@ resource "aws_iam_policy" "secrets_manager_policy" {
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_policy_attachment" {
   policy_arn = aws_iam_policy.secrets_manager_policy.arn
+  role       = aws_iam_role.my_role.id
+}
+
+resource "aws_iam_policy" "describe_database_policy" {
+  name        = "${var.function_name}-describe-database-policy-${var.env}"
+  description = "Policy to allow access to Describe Database"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "rds:Describe*"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "describe_database_policy_attachment" {
+  policy_arn = aws_iam_policy.describe_database_policy.arn
   role       = aws_iam_role.my_role.id
 }
