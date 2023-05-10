@@ -47,7 +47,7 @@ def lambda_handler(event, context):
         }
         return response
     
-    senha = hashlib.sha256(bytes(senha, 'utf-8'))
+    senha = hashlib.sha256(bytes(senha, 'utf-8')).hexdigest()
 
     secretsmanager = boto3.client('secretsmanager')
     response = secretsmanager.get_secret_value(SecretId=f'replenish4me-db-password-{os.environ.get("env", "dev")}')
