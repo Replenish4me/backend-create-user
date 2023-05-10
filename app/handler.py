@@ -3,6 +3,7 @@ import json
 import pymysql
 import os
 import re
+import hashlib
 
 def lambda_handler(event, context):
     
@@ -45,6 +46,8 @@ def lambda_handler(event, context):
             "body": json.dumps({"message": "A senha fornecida é inválida. Ela deve conter pelo menos 8 caracteres, uma letra e um número"}),
         }
         return response
+    
+    senha = hashlib.sha256(bytes(senha, 'utf-8'))
 
     secretsmanager = boto3.client('secretsmanager')
     response = secretsmanager.get_secret_value(SecretId=f'replenish4me-db-password-{os.environ.get("env", "dev")}')
